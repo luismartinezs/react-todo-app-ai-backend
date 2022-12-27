@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const uuid = require('uuid').v4;
 const app = express();
 const port = 3000;
 
@@ -7,17 +8,17 @@ app.use(cors());
 
 let todos = [
   {
-    id: 1,
+    id: uuid(),
     text: 'Learn Node.js',
     completed: false,
   },
   {
-    id: 2,
+    id: uuid(),
     text: 'Learn Express',
     completed: false,
   },
   {
-    id: 3,
+    id: uuid(),
     text: 'Learn MongoDB',
     completed: false,
   },
@@ -31,7 +32,7 @@ app.get('/api/todos', (req, res) => {
 
 app.post('/api/todos', (req, res) => {
   const newTodo = {
-    id: todos.length + 1,
+    id: uuid(),
     text: req.body.text,
     completed: false,
   };
@@ -40,14 +41,18 @@ app.post('/api/todos', (req, res) => {
 });
 
 app.put('/api/todos/:id', (req, res) => {
-  const todo = todos.find((t) => t.id === parseInt(req.params.id));
+  const id = req.params.id;
+  const todo = todos.find((t) => t.id === id);
   if (!todo) return res.status(404).send('Todo not found');
   todo.text = req.body.text;
+  todo.completed = req.body.completed;
   res.send(todo);
 });
 
+
 app.delete('/api/todos/:id', (req, res) => {
-  const todo = todos.find((t) => t.id === parseInt(req.params.id));
+  const id = req.params.id;
+  const todo = todos.find((t) => t.id === id);
   if (!todo) return res.status(404).send('Todo not found');
   const index = todos.indexOf(todo);
   todos.splice(index, 1);
